@@ -1,11 +1,23 @@
+import { useSelector, useDispatch } from 'react-redux';
+import { addContact } from '../../redux/contactsSlice';
+import { getContacts } from '../../redux/selectors';
 import css from './ContactsForm.module.css';
 
-export const ContactsForm = ({ addContact }) => {
+export const ContactsForm = () => {
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
+
   const handleSubmit = e => {
     e.preventDefault();
     const name = e.currentTarget.elements.name.value;
     const number = e.currentTarget.elements.number.value;
-    addContact({ name, number });
+
+    const hasDuplicate = contacts.some(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
+    if (hasDuplicate) return alert(`${name} is already in contacts.`);
+
+    dispatch(addContact({ name, number }));
     e.currentTarget.reset();
   };
 
